@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  backend:
+    image: backend:latest
+    networks:
+      - proxy
+    labels:
+      - "traefik.http.routers.backend.rule=Host(`s141086-2.devops-ap.be`) && PathPrefix(`/api`)"
+      - "traefik.http.services.backend-service.loadbalancer.server.port=3000"
+      - "traefik.http.routers.backend.tls=true"
+      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+      - "traefik.docker.network=traefik"
+
+  frontend:
+    image: nginx
+    volumes:
+      - ./frontend/static:/usr/share/nginx/html
+    networks:
+      - proxy
+    labels:
+      - "traefik.http.routers.frontend.rule=Host(`s141086-2.devops-ap.be`)"
+      - "traefik.http.routers.frontend.tls=true"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.docker.network=traefik"
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: Ditisgoed!
+      MYSQL_DATABASE: mysql_project
+      MYSQL_USER: projectUser
+      MYSQL_PASSWORD: Ditisgoed!
+    volumes:
+      - "db-volume:/var/lib/mysql"
+      - "./init.sql:/docker-entrypoint-initdb.d/1.sql:ro"
+
+networks:
+  proxy:
+    external: true
+    name: traefik
+
+volumes:
+  db-volume:
