@@ -26,11 +26,7 @@ services:
 
   mysql:
     image: mysql:latest
-    environment:
-      MYSQL_ROOT_PASSWORD: Ditisgoed!
-      MYSQL_DATABASE: mysql_project
-      MYSQL_USER: projectUser
-      MYSQL_PASSWORD: Ditisgoed!
+    env_file: .env
     volumes:
       - "db-volume:/var/lib/mysql"
       - "./init.sql:/docker-entrypoint-initdb.d/1.sql:ro"
