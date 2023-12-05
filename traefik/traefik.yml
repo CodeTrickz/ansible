@@ -20,5 +20,10 @@ certificatesResolvers:
 providers:
   docker:
     network: traefik
+
 api:
   dashboard: true
+
+accessLog:
+  filePath: "../logs/access.json"
+  format: json
