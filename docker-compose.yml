@@ -26,7 +26,12 @@ services:
 
   mysql:
     image: mysql:latest
-    env_file: .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
     volumes:
       - "db-volume:/var/lib/mysql"
       - "./init.sql:/docker-entrypoint-initdb.d/1.sql:ro"
