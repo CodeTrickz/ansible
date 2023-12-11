@@ -42,6 +42,7 @@ De API draait in een subfolder /api.
 1. Expose de todo applicatie op ```https://<studentnr>.devops-ap.be```
 
 ## toevoegingen
-### acces logs
+### access logs
+Om de access logs te kunnen wegschrijven moet er map gemaakt worden met naam logs met daarin access.json. De access logs zullen daarin worden wegschreven. Vanuit security overwegingen staat de logs map standaard in de .gitignore
 
 ### jaeger tracing
