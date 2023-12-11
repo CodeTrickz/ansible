@@ -1,4 +1,5 @@
 version: "3"
+
 services:
   traefik-proxy:
     image: traefik:v2.10
@@ -19,6 +20,15 @@ services:
       - "traefik.http.routers.dashboard.tls=true"
       - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
       - "traefik.http.routers.dashboard.entrypoints=websecure"
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    labels:
+      - "traefik.http.routers.jaeger.rule=Host(`s141086-3.devops-ap.be`)"
+      - "traefik.http.routers.jaeger.service=jaeger"
+      - "traefik.http.services.jaeger.loadbalancer.server.port=16686"
+      - "traefik.http.routers.jaeger.tls=true"
+      - "traefik.http.routers.jaeger.tls.certresolver=letsencrypt"
 networks:
   default:
     external: true
