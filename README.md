@@ -40,3 +40,8 @@ De API draait in een subfolder /api.
 1. Installeer Traefik als Reverse proxy op je omgeving.
 1. Configureer ssl certificaat aanvraag via LetsEncrypt
 1. Expose de todo applicatie op ```https://<studentnr>.devops-ap.be```
+
+## toevoegingen
+### acces logs
+
+### jaeger tracing
