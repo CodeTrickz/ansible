@@ -3,6 +3,7 @@ version: "3"
 services:
   traefik-proxy:
     image: traefik:v2.10
+    container_name: traefik
     ports:
       - 80:80
       - 443:443
@@ -20,6 +21,7 @@ services:
       - "traefik.http.routers.dashboard.tls=true"
       - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
       - "traefik.http.routers.dashboard.entrypoints=websecure"
+
   jaeger:
     image: jaegertracing/all-in-one:latest
     container_name: jaeger
@@ -29,6 +31,8 @@ services:
       - "traefik.http.services.jaeger.loadbalancer.server.port=16686"
       - "traefik.http.routers.jaeger.tls=true"
       - "traefik.http.routers.jaeger.tls.certresolver=letsencrypt"
+    networks:
+      - default
 networks:
   default:
     external: true

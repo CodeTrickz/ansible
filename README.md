@@ -43,6 +43,15 @@ De API draait in een subfolder /api.
 
 ## toevoegingen
 ### access logs
-Om de access logs te kunnen wegschrijven moet er map gemaakt worden met naam logs met daarin access.json. De access logs zullen daarin worden wegschreven. Vanuit security overwegingen staat de logs map standaard in de .gitignore
+Om de access logs te kunnen wegschrijven moet er map gemaakt worden met de naam logs met daarin access.json. De access logs zullen daarin worden weggeschreven. Vanuit security overwegingen staat de logs map standaard in de .gitignore
 
 ### jaeger tracing
+Voor dit project wordt traefik gebruikt als reverse proxy. De jaeger tracing is een extra feature dat bovenop trafik draait voor tracing. De jaeger UI draait op "https://s141086-3.devops-ap.be/". 
+
+### traefik
+
+### jenkins
+De Jenkinscontainer wordt gebruikt om de base app te builden en deployen. Doormiddel van agent en een pipeline script. De jenkins UI draait op ""https://s141086-1.devops-ap.be/jenkins".
+
+#### automatisch build met jenkins
+Default word er met elke git push , de applicatie automatisch opnieuw gebuild en gedeployed met jenkins. Dit gebeurd via een webhook die aangemaakt is in het github project. Deze webhook is gekoppeld aan de jenkins agent. 
