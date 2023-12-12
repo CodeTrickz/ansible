@@ -41,17 +41,24 @@ De API draait in een subfolder /api.
 1. Configureer ssl certificaat aanvraag via LetsEncrypt
 1. Expose de todo applicatie op ```https://<studentnr>.devops-ap.be```
 
-## toevoegingen
-### access logs
+## werking
+### doel
+Met alle toevoegingen tracht ik om alle extra containers die bovenop de base app draaien, Op één host te laten werken. In realiteit ga je ook vaak maar één domein hebben en niet meerdere. Vanuit dat standpunt wil ik alles op één domein. 
+
+### toevoegingen
+#### access logs
 Om de access logs te kunnen wegschrijven moet er map gemaakt worden met de naam logs met daarin access.json. De access logs zullen daarin worden weggeschreven. Vanuit security overwegingen staat de logs map standaard in de .gitignore
 
-### jaeger tracing
-Voor dit project wordt traefik gebruikt als reverse proxy. De jaeger tracing is een extra feature dat bovenop trafik draait voor tracing. De jaeger UI draait op "https://s141086-3.devops-ap.be/". 
+#### jaeger tracing
+Voor dit project wordt traefik gebruikt als reverse proxy. De jaeger tracing is een extra feature dat bovenop trafik draait voor tracing. De jaeger UI draait op "https://s141086-1.devops-ap.be/jaeger". Dankzij de environment variabele "- QUERY_BASE_PATH=/jaeger" in traefik docker compose , werkt jaeger op /jaeger en niet op de root van de host.
 
-### traefik
+#### traefik
+Traefik wordt in dit project als reverse proxy voor alle onderliggende containers. De UI is beschikbaar op "https://s141086-1.devops-ap.be/". De login van de user wordt gehashed bijgehouden in de traefik map als passwd. Deze map moet je aanmaken. 
 
-### jenkins
-De Jenkinscontainer wordt gebruikt om de base app te builden en deployen. Doormiddel van agent en een pipeline script. De jenkins UI draait op ""https://s141086-1.devops-ap.be/jenkins".
+Voor het certificaat moet je een bestand acme.json aanmaken. De mail in de traefik.yml moet je aanpassen naar je eigen email. Letsencrypt doet de rest. 
 
-#### automatisch build met jenkins
+#### jenkins
+De Jenkinscontainer wordt gebruikt om de base app te builden en deployen. Doormiddel van agent en een pipeline script. Je moet hier inloggen met je de user die je aanmaakt tijdens de jenkins installatie. De jenkins UI draait op "https://s141086-1.devops-ap.be/jenkins". Dankzij de environment variabele "- JENKINS_OPTS=--prefix=/jenkins" in docker compose van jenkins , werkt jenkins op /jenkins en niet de root van de host.
+
+##### automatisch build met jenkins
 Default word er met elke git push , de applicatie automatisch opnieuw gebuild en gedeployed met jenkins. Dit gebeurd via een webhook die aangemaakt is in het github project. Deze webhook is gekoppeld aan de jenkins agent. 

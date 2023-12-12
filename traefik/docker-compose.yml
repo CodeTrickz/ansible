@@ -25,8 +25,10 @@ services:
   jaeger:
     image: jaegertracing/all-in-one:latest
     container_name: jaeger
+    environment:
+      - QUERY_BASE_PATH=/jaeger
     labels:
-      - "traefik.http.routers.jaeger.rule=Host(`s141086-3.devops-ap.be`)"
+      - "traefik.http.routers.jaeger.rule=Host(`s141086-1.devops-ap.be`) && PathPrefix(`/jaeger`)"
       - "traefik.http.routers.jaeger.service=jaeger"
       - "traefik.http.services.jaeger.loadbalancer.server.port=16686"
       - "traefik.http.routers.jaeger.tls=true"
