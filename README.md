@@ -40,6 +40,9 @@ De API draait in een subfolder /api.
 1. Installeer Traefik als Reverse proxy op je omgeving.
 1. Configureer ssl certificaat aanvraag via LetsEncrypt
 1. Expose de todo applicatie op ```https://<studentnr>.devops-ap.be```
+1. Integreer jenkins in het project.
+1. Integreer Jaeger met traefik in het project
+1. Integreer Portainer in het project
 
 ## werking
 ### doel
@@ -60,7 +63,7 @@ Voor het certificaat moet je een bestand acme.json aanmaken. De mail in de traef
 ##### access logs voor traefik
 Om de access logs te kunnen wegschrijven moet er map gemaakt worden met de naam logs met daarin access.json. De access logs zullen daarin worden weggeschreven. Vanuit security overwegingen staat de logs map standaard in de .gitignore
 
-##### jaeger tracing
+##### jaeger tracing voor traefik
 Voor dit project wordt traefik gebruikt als reverse proxy. De jaeger tracing is een extra feature dat bovenop trafik draait voor tracing. De jaeger UI draait op "https://s141086-1.devops-ap.be/jaeger". Dankzij de environment variabele "- QUERY_BASE_PATH=/jaeger" in traefik docker compose , werkt jaeger op /jaeger en niet op de root van de host.
 
 #### portainer
@@ -70,4 +73,4 @@ Portainer is een container manager die het deployen,monitoren en managen van con
 De Jenkinscontainer wordt gebruikt om de base app te builden en deployen. Doormiddel van agent en een pipeline script. Je moet hier inloggen met je de user die je aanmaakt tijdens de jenkins installatie. De jenkins UI draait op "https://s141086-1.devops-ap.be/jenkins". Dankzij de environment variabele "- JENKINS_OPTS=--prefix=/jenkins" in docker compose van jenkins , werkt jenkins op /jenkins en niet de root van de host.
 
 ##### automatisch build met jenkins
-Default word er met elke git push , de applicatie automatisch opnieuw gebuild en gedeployed met jenkins. Dit gebeurd via een webhook die aangemaakt is in het github project. Deze webhook is gekoppeld aan de jenkins agent. 
+Default word er met elke git push , de applicatie automatisch opnieuw gebuild en gedeployed met jenkins. Dit gebeurd via een webhook die aangemaakt is in het github project. Deze webhook is gekoppeld aan de jenkins agent. Via een pipeline script. 
