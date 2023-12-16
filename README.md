@@ -43,19 +43,28 @@ De API draait in een subfolder /api.
 
 ## werking
 ### doel
-Met alle toevoegingen tracht ik om alle extra containers die bovenop de base app draaien, Op één host te laten werken. In realiteit ga je ook vaak maar één domein hebben en niet meerdere. Vanuit dat standpunt wil ik alles op één domein. 
+Omdat ik maar beschik over 4 hosts zijn een aantal containers door subpaths te samen gezet op één host. Zo draaien traefik , jenkins en jaeger allemaal samen op "https://s141086-1.devops-ap.be". De base app draait op "https://s141086-2.devops-ap.be" en portainer draait op "https://s141086-3.devops-ap.be". 
+
+Al deze hosts zijn beveiligd met een certificaat van letsencrypt dankzij acme zijn aangevraagt. 
+- Portainer wordt gebruikt om de containers te beheren. 
+- Traefik wordt als reverse proxy gebruikt voor alle andere containers. 
+- Jaeger wordt gebruikt om de traefik van tracing te voorzien. 
+- Jenkins wordt gebruikt om de base app automatisch te kunnen laten builden via een pipeline script. 
 
 ### toevoegingen
-#### access logs
-Om de access logs te kunnen wegschrijven moet er map gemaakt worden met de naam logs met daarin access.json. De access logs zullen daarin worden weggeschreven. Vanuit security overwegingen staat de logs map standaard in de .gitignore
-
-#### jaeger tracing
-Voor dit project wordt traefik gebruikt als reverse proxy. De jaeger tracing is een extra feature dat bovenop trafik draait voor tracing. De jaeger UI draait op "https://s141086-1.devops-ap.be/jaeger". Dankzij de environment variabele "- QUERY_BASE_PATH=/jaeger" in traefik docker compose , werkt jaeger op /jaeger en niet op de root van de host.
-
 #### traefik
-Traefik wordt in dit project als reverse proxy voor alle onderliggende containers. De UI is beschikbaar op "https://s141086-1.devops-ap.be/". De login van de user wordt gehashed bijgehouden in de traefik map als passwd. Deze map moet je aanmaken. 
+Traefik wordt in dit project als reverse proxy voor alle onderliggende containers. De UI is beschikbaar op "https://s141086-1.devops-ap.be/dashboard". De login van de user wordt gehashed bijgehouden in de traefik map als passwd. Deze map moet je aanmaken. 
 
 Voor het certificaat moet je een bestand acme.json aanmaken. De mail in de traefik.yml moet je aanpassen naar je eigen email. Letsencrypt doet de rest. 
+
+##### access logs voor traefik
+Om de access logs te kunnen wegschrijven moet er map gemaakt worden met de naam logs met daarin access.json. De access logs zullen daarin worden weggeschreven. Vanuit security overwegingen staat de logs map standaard in de .gitignore
+
+##### jaeger tracing
+Voor dit project wordt traefik gebruikt als reverse proxy. De jaeger tracing is een extra feature dat bovenop trafik draait voor tracing. De jaeger UI draait op "https://s141086-1.devops-ap.be/jaeger". Dankzij de environment variabele "- QUERY_BASE_PATH=/jaeger" in traefik docker compose , werkt jaeger op /jaeger en niet op de root van de host.
+
+#### portainer
+Portainer is een container manager die het deployen,monitoren en managen van containers simpeler maakt. Deze draait op "https://s141086-3.devops-ap.be". Login account wordt aangemaakt op de moment dat je de eerste keer op de portainer ui connecteerd.
 
 #### jenkins
 De Jenkinscontainer wordt gebruikt om de base app te builden en deployen. Doormiddel van agent en een pipeline script. Je moet hier inloggen met je de user die je aanmaakt tijdens de jenkins installatie. De jenkins UI draait op "https://s141086-1.devops-ap.be/jenkins". Dankzij de environment variabele "- JENKINS_OPTS=--prefix=/jenkins" in docker compose van jenkins , werkt jenkins op /jenkins en niet de root van de host.
