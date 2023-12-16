@@ -1,0 +1,28 @@
+pipeline {
+     options {
+        buildDiscarder(logRotator(numToKeepStr: '3'))
+    }
+    agent { label 's141086-2.devops-ap.be' }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Clone the git repository
+                git credentialsId: 'git-deploy-key', branch: 'main', url: 'git@github.com:AP-IT-GH/projectopdracht-CodeTrickz.git'
+            }
+        }
+
+        stage('Build and deploy') {
+            environment{
+                MYSQL_ROOT_PASSWORD = credentials('mysql_root_password')
+                MYSQL_DATABASE = credentials('mysql_database')
+                MYSQL_USER = credentials('mysql_user')
+                MYSQL_PASSWORD = credentials('mysql_password')
+            }
+            steps{
+                // Commands to deploy app on server
+                sh "docker compose up --build -d"
+            }
+        }
+    }
+}
