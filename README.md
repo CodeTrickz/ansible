@@ -74,3 +74,4 @@ De Jenkinscontainer wordt gebruikt om de base app te builden en deployen. Doormi
 
 ##### automatisch build met jenkins
 Default word er met elke git push , de applicatie automatisch opnieuw gebuild en gedeployed met jenkins. Dit gebeurd via een webhook die aangemaakt is in het github project. Deze webhook is gekoppeld aan de jenkins agent. Via een pipeline script. 
+wijzeging
