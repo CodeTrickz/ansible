@@ -1,6 +1,4 @@
-../backend/node_modules
 .env
-/logs
 /jenkins/ssh
 /traefik/acme.json
 /traefik/passwd

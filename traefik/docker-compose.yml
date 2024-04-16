@@ -14,27 +14,13 @@ services:
       - ./passwd:/etc/traefik/passwd
       - ../logs/access.json:/logs/access.json
     labels:
-      - "traefik.http.routers.dashboard.rule=Host(`s141086-1.devops-ap.be`)"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.ELK.be`)"
       - "traefik.http.routers.dashboard.service=api@internal"
       - "traefik.http.routers.dashboard.middlewares=auth"
       - "traefik.http.middlewares.auth.basicauth.usersfile=/etc/traefik/passwd"
       - "traefik.http.routers.dashboard.tls=true"
       - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
       - "traefik.http.routers.dashboard.entrypoints=websecure"
-
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    container_name: jaeger
-    environment:
-      - QUERY_BASE_PATH=/jaeger
-    labels:
-      - "traefik.http.routers.jaeger.rule=Host(`s141086-1.devops-ap.be`) && PathPrefix(`/jaeger`)"
-      - "traefik.http.routers.jaeger.service=jaeger"
-      - "traefik.http.services.jaeger.loadbalancer.server.port=16686"
-      - "traefik.http.routers.jaeger.tls=true"
-      - "traefik.http.routers.jaeger.tls.certresolver=letsencrypt"
-    networks:
-      - default
 networks:
   default:
     external: true

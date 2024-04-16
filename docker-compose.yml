@@ -1,45 +1,40 @@
 version: '3'
 
 services:
-  backend:
-    image: backend:latest
-    networks:
-      - proxy
-    labels:
-      - "traefik.http.routers.backend.rule=Host(`s141086-2.devops-ap.be`) && PathPrefix(`/api`)"
-      - "traefik.http.services.backend-service.loadbalancer.server.port=3000"
-      - "traefik.http.routers.backend.tls=true"
-      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
-      - "traefik.docker.network=traefik"
-
-  frontend:
-    image: nginx
-    volumes:
-      - ./frontend/static:/usr/share/nginx/html
-    networks:
-      - proxy
-    labels:
-      - "traefik.http.routers.frontend.rule=Host(`s141086-2.devops-ap.be`)"
-      - "traefik.http.routers.frontend.tls=true"
-      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
-      - "traefik.docker.network=traefik"
-
-  mysql:
-    image: mysql:latest
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.2
+    container_name: elasticsearch
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
     volumes:
-      - "db-volume:/var/lib/mysql"
-      - "./init.sql:/docker-entrypoint-initdb.d/1.sql:ro"
+      - esdata:/usr/share/elasticsearch/data
+    command: >
+      bash -c '
+      bin/elasticsearch-keystore create;
+      echo "your_password" | bin/elasticsearch-keystore add -x "bootstrap.password";
+      sleep 5;
+      curl -XPOST -u "elastic:your_password" "http://elasticsearch:9200/_security/role/admin_role" -H "Content-Type: application/json" -d "{\"cluster\":[\"all\"],\"indices\":[{\"names\":[\"*\"],\"privileges\":[\"all\"]}]}";
+      curl -XPOST -u "elastic:your_password" "http://elasticsearch:9200/_security/user/admin" -H "Content-Type: application/json" -d "{\"password\":\"admin_password\",\"roles\":[\"admin_role\"]}";
+      bin/elasticsearch
+      '
 
-networks:
-  proxy:
-    external: true
-    name: traefik
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.15.2
+    container_name: logstash
+    volumes:
+      - ./logstash/config/logstash.conf/:/usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - "5000:5000"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.15.2
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://localhost:9200
 
 volumes:
-  db-volume:
+  esdata:

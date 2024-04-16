@@ -23,11 +23,3 @@ providers:
 api:
   dashboard: true
 
-accessLog:
-  filePath: "../logs/access.json"
-  format: json
-
-tracing: 
-    jaeger:
-      samplingServerURL: http://jaeger:5778/sampling
-
